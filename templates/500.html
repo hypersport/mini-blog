@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Internal Server Error{% endblock %}
+{% block head %}
+    {{ super() }}
+    <script type="text/javascript">
+        {% for msg in get_flashed_messages() %}
+            console.log({{ msg }});
+        {% endfor %}
+    </script>
+{% endblock %}
+{% block body %}
+    <div class="page-header">
+        <h1 style="margin-left: 15px;">Internal Server Error</h1>
+    </div>
+{% endblock %}

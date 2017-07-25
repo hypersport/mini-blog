@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html {% block html_attribs %}{% endblock html_attribs %}>
+<head>
+    {%- block head %}
+        <meta charset="UTF-8">
+        <title>{% block title %}{{ title|default }}{% endblock title %}</title>
+        <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+        <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+        <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="css/bootstrap.css") }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="css/my-style.css") }}">
+        <script src="{{ url_for("static", filename="js/jquery-3.1.1.min.js") }}"></script>
+        <script src="{{ url_for("static", filename="js/my-js.js") }}"></script>
+    {% endblock head -%}
+</head>
+<body>
+<div class="sysinfo">
+    <div class="navbar navbar-inverse" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="{{ url_for('main.index') }}">Mini Blog</a>
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="{{ url_for('main.index') }}">首页</a></li>
+                    <li><a href="{{ url_for('main.index') }}">学习</a></li>
+                    <li><a href="{{ url_for('main.index') }}">扯淡</a></li>
+                    <li><a href="{{ url_for('main.index') }}">关于</a></li>
+                    <li><a href="{{ url_for('main.reset') }}">修改密码</a></li>
+                    <li><a href="{{ url_for('main.login') }}">登录</a></li>
+                    <li><a href="{{ url_for('main.logout') }}">退出</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+</div>
+</body>
+</html>
