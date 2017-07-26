@@ -1,9 +1,12 @@
 # coding=utf-8
+import datetime
+import random
+
 from flask_login import login_user, logout_user, login_required, current_user
 from . import main
 from flask import render_template, flash, redirect, request, url_for
 from models import User
-from form import LoginForm, ResetPasswordForm
+from form import LoginForm, ResetPasswordForm, EditorForm
 
 
 @main.app_errorhandler(404)
@@ -65,3 +68,21 @@ def reset():
 		flash('密码修改成功')
 		return redirect(url_for('main.index'))
 	return render_template('reset.html', form=form)
+
+
+def rand_filename():
+	filename = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+	return '{}{}'.format(filename, str(random.randrange(100, 1000)))
+
+
+@main.route('/fileupload')
+@login_required
+def file_upload():
+	return
+
+
+@main.route('/editor', methods=['GET', 'POST'])
+@login_required
+def editor():
+	form = EditorForm()
+	return render_template('editor.html', form=form)

@@ -3,7 +3,7 @@ from flask_login import current_user
 from flask_wtf import FlaskForm
 from wtforms.validators import DataRequired, Length, ValidationError, Regexp, EqualTo
 from models import User
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextAreaField
 from custom import CancelField
 
 
@@ -31,6 +31,13 @@ class ResetPasswordForm(FlaskForm):
 		if not current_user.verify_password(field.data):
 			raise ValidationError('密码不正确')
 		
-	# def validate_username(self, field):
-	# 	if User.query.filter_by(username=field.data).first():
-	# 		raise ValidationError('用户名已存在')
+		# def validate_username(self, field):
+		# 	if User.query.filter_by(username=field.data).first():
+		# 		raise ValidationError('用户名已存在')
+
+
+class EditorForm(FlaskForm):
+	title = StringField('标题')
+	content = TextAreaField('内容', validators=[DataRequired('内容不能空')])
+	submit = SubmitField('提交')
+	cancel = CancelField('取消')
