@@ -13,11 +13,6 @@ class User(UserMixin, db.Model):
 	is_administrator = db.Column(db.Boolean, default=False)
 	is_deleted = db.Column(db.Boolean, default=False)
 	
-	def __init__(self, username, password, is_administrator):
-		self.username = username
-		self.password_hash = generate_password_hash(password)
-		self.is_administrator = is_administrator
-	
 	@property
 	def password(self):
 		raise AttributeError('Password is a readable attribute.')
@@ -42,10 +37,13 @@ def load_user(user_id):
 class Blog(db.Model):
 	__tablename__ = 'blogs'
 	id = db.Column(db.Integer, primary_key=True)
+	title = db.Column(db.Text)
 	body = db.Column(db.Text)
+	mark = db.Column(db.Text)
 	timestamp = db.Column(db.DateTime, index=True, default=datetime.now())
-	post = db.relationship('Comment', backref='post', lazy='dynamic')
+	comments = db.relationship('Comment', backref='blog', lazy='dynamic')
 	is_deleted = db.Column(db.Boolean, default=False)
+	author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
 
 class Comment(db.Model):
@@ -53,4 +51,4 @@ class Comment(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	body = db.Column(db.Text)
 	timestamp = db.Column(db.DateTime, index=True, default=datetime.now())
-	post_id = db.Column(db.Integer, db.ForeignKey('blogs.id'))
+	blog_id = db.Column(db.Integer, db.ForeignKey('blogs.id'))
