@@ -38,6 +38,7 @@ class ResetPasswordForm(FlaskForm):
 
 class EditorForm(FlaskForm):
 	title = StringField('标题')
-	content = TextAreaField('内容', validators=[DataRequired('内容不能空')])
+	body = TextAreaField('内容', validators=[DataRequired('内容不能空')])
+	mark = StringField('标签')
 	submit = SubmitField('提交')
 	cancel = CancelField('取消')
