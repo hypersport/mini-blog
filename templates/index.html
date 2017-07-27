@@ -4,5 +4,11 @@
     {{ super() }}
 {% endblock %}
 {% block content %}
+    {% for msg in get_flashed_messages() %}
+        <div class="alert alert-warning">
+            <button type="button" class="close" onclick="closeMsg()">&times;</button>
+            {{ msg }}
+        </div>
+    {% endfor %}
     <h1>{{ context }}</h1>
 {% endblock %}
