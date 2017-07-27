@@ -1,11 +1,10 @@
 # coding=utf-8
 import datetime
 import random
-
 from flask_login import login_user, logout_user, login_required, current_user
-from . import main
+from . import main, db
 from flask import render_template, flash, redirect, request, url_for
-from models import User
+from models import User, Blog
 from form import LoginForm, ResetPasswordForm, EditorForm
 
 
@@ -39,6 +38,7 @@ def login():
 			if form.password.data == 'admin':
 				flash('请更换密码')
 				return redirect(url_for('main.reset'))
+			login_user(user, form.remember_me.data)
 			flash('登陆成功')
 			return redirect(request.args.get('next', '/') if request.args.get('next') != '/logout' else '/')
 		flash('登录失败')
@@ -81,8 +81,12 @@ def file_upload():
 	return
 
 
-@main.route('/editor', methods=['GET', 'POST'])
+@main.route('/public', methods=['GET', 'POST'])
 @login_required
 def editor():
 	form = EditorForm()
-	return render_template('editor.html', form=form)
+	if form.validate_on_submit():
+		blog = Blog(title=form.title.data, body=form.body.data, mark=form.mark.data, author_id=current_user.id)
+		db.session.add(blog)
+		return redirect(url_for('main.index'))
+	return render_template('public.html', form=form)
