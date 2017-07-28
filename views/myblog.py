@@ -35,11 +35,10 @@ def login():
 		user = User.query.filter_by(username=form.username.data, is_deleted=False).first()
 		if user and user.verify_password(form.password.data):
 			login_user(user, form.remember_me.data)
+			flash('登陆成功')
 			if form.password.data == 'admin':
 				flash('请更换密码')
 				return redirect(url_for('main.reset'))
-			login_user(user, form.remember_me.data)
-			flash('登陆成功')
 			return redirect(request.args.get('next', '/') if request.args.get('next') != '/logout' else '/')
 		flash('登录失败')
 	return render_template('login.html', form=form)
@@ -55,7 +54,11 @@ def logout():
 
 @main.route('/')
 def index():
-	return render_template('index.html', context='hello world')
+	search_tag = request.form.get('search_tag', '')
+	blogs = Blog.query.filter_by(is_deleted=False).filter(Blog.body.like('%' + search_tag + '%')).all()
+	if not blogs:
+		blogs = '暂时没有博客哦'
+	return render_template('index.html', blogs=blogs)
 
 
 @main.route('/reset', methods=['GET', 'POST'])
@@ -81,12 +84,12 @@ def file_upload():
 	return
 
 
-@main.route('/public', methods=['GET', 'POST'])
+@main.route('/publish', methods=['GET', 'POST'])
 @login_required
-def editor():
+def publish():
 	form = EditorForm()
 	if form.validate_on_submit():
 		blog = Blog(title=form.title.data, body=form.body.data, mark=form.mark.data, author_id=current_user.id)
 		db.session.add(blog)
 		return redirect(url_for('main.index'))
-	return render_template('public.html', form=form)
+	return render_template('publish.html', form=form)
