@@ -27,6 +27,10 @@
     {% if current_user.is_administrator %}
         <hr>
         <a class="btn btn-default" href="{{ url_for('main.edit', blog_id=blog.id) }}">修改</a>
-        <a class="btn btn-default" href="{{ url_for('main.delete', blog_id=blog.id) }}">删除</a>
+        {% if blog.is_deleted %}
+            <a class="btn btn-default" href="{{ url_for('main.restore', blog_id=blog.id) }}">恢复</a>
+        {% else %}
+            <a class="btn btn-default" href="{{ url_for('main.delete', blog_id=blog.id) }}">删除</a>
+        {% endif %}
     {% endif %}
 {% endblock %}

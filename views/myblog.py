@@ -117,7 +117,7 @@ def edit(blog_id):
 @main.route('/details/<int:blog_id>', methods=['GET', 'POST'])
 def details(blog_id):
 	blog = Blog.query.get_or_404(blog_id)
-	if blog.is_deleted:
+	if blog.is_deleted and not current_user:
 		abort(404)
 	return render_template('details.html', blog=blog)
 
@@ -129,4 +129,22 @@ def delete(blog_id):
 	if blog.is_deleted:
 		abort(404)
 	blog.is_deleted = 1
+	return redirect(url_for('main.index'))
+
+
+@main.route('/deleted', defaults={'tag': ''})
+@main.route('/<string:tag>')
+@login_required
+def deleted(tag):
+	blogs = Blog.query.filter_by(is_deleted=1).filter(Blog.mark.like('%' + tag + '%')).all()
+	return render_template('index.html', blogs=blogs)
+
+
+@main.route('/restore/<int:blog_id>', methods=['GET', 'POST'])
+@login_required
+def restore(blog_id):
+	blog = Blog.query.get_or_404(blog_id)
+	if not blog.is_deleted:
+		abort(404)
+	blog.is_deleted = 0
 	return redirect(url_for('main.index'))
