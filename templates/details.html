@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Mini Blog{% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block content %}
+    {% for msg in get_flashed_messages() %}
+        <div class="alert alert-warning">
+            <button type="button" class="close" onclick="closeMsg()">&times;</button>
+            {{ msg }}
+        </div>
+    {% endfor %}
+    <h1>{{ blog.title|safe }}</h1>
+    {{ blog.timestamp }}
+    <hr>
+    {{ blog.body|safe }}
+    <hr>
+    {% if blog.mark %}
+        标签：
+        <a href="{{ url_for('main.index', tag=blog.mark) }}">
+            <span class="label label-primary">{{ blog.mark|safe }}</span>
+        </a>
+    {% endif %}
+{% endblock %}

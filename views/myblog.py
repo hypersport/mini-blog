@@ -52,12 +52,10 @@ def logout():
 	return redirect(url_for('main.index'))
 
 
-@main.route('/')
-def index():
-	search_tag = request.form.get('search_tag', '')
-	blogs = Blog.query.filter_by(is_deleted=False).filter(Blog.body.like('%' + search_tag + '%')).all()
-	if not blogs:
-		blogs = '暂时没有博客哦'
+@main.route('/', defaults={'tag': ''})
+@main.route('/<string:tag>')
+def index(tag):
+	blogs = Blog.query.filter_by(is_deleted=False).filter(Blog.mark.like('%' + tag + '%')).all()
 	return render_template('index.html', blogs=blogs)
 
 
@@ -93,3 +91,9 @@ def publish():
 		db.session.add(blog)
 		return redirect(url_for('main.index'))
 	return render_template('publish.html', form=form)
+
+
+@main.route('/details/<int:blog_id>', methods=['GET', 'POST'])
+def details(blog_id):
+	blog = Blog.query.get_or_404(blog_id)
+	return render_template('details.html', blog=blog)
