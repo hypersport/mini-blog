@@ -1,11 +1,11 @@
 # coding=utf-8
-import datetime
 import random
 from flask_login import login_user, logout_user, login_required, current_user
 from . import main, db
-from flask import render_template, flash, redirect, request, url_for
+from flask import render_template, flash, redirect, request, url_for, abort
 from models import User, Blog
 from form import LoginForm, ResetPasswordForm, EditorForm
+from datetime import datetime
 
 
 @main.app_errorhandler(404)
@@ -90,10 +90,34 @@ def publish():
 		blog = Blog(title=form.title.data, body=form.body.data, mark=form.mark.data, author_id=current_user.id)
 		db.session.add(blog)
 		return redirect(url_for('main.index'))
-	return render_template('publish.html', form=form)
+	return render_template('editor.html', form=form)
+
+
+@main.route('/edit/<int:blog_id>', methods=['GET', 'POST'])
+@login_required
+def edit(blog_id):
+	blog = Blog.query.get_or_404(blog_id)
+	if blog.is_deleted:
+		abort(404)
+	form = EditorForm()
+	if form.validate_on_submit():
+		blog.title = form.title.data
+		blog.body = form.body.data
+		blog.mark = form.mark.data
+		blog.changed_time = datetime.now()
+		blog.changed_user_id = current_user.id
+		db.session.add(blog)
+		return redirect(url_for('main.details', blog_id=blog_id))
+	form.title.data = blog.title
+	form.body.data = blog.body
+	if blog.mark:
+		form.mark.data = blog.mark
+	return render_template('editor.html', form=form)
 
 
 @main.route('/details/<int:blog_id>', methods=['GET', 'POST'])
 def details(blog_id):
 	blog = Blog.query.get_or_404(blog_id)
+	if blog.is_deleted:
+		abort(404)
 	return render_template('details.html', blog=blog)

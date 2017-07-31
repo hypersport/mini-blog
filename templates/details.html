@@ -11,7 +11,10 @@
         </div>
     {% endfor %}
     <h1>{{ blog.title|safe }}</h1>
-    {{ blog.timestamp }}
+    创建于：{{ blog.timestamp }}
+    {% if blog.changed_time %}
+        &emsp;&emsp;修改于：{{ blog.changed_time }}
+    {% endif %}
     <hr>
     {{ blog.body|safe }}
     <hr>
@@ -20,5 +23,9 @@
         <a href="{{ url_for('main.index', tag=blog.mark) }}">
             <span class="label label-primary">{{ blog.mark|safe }}</span>
         </a>
+    {% endif %}
+    {% if current_user.is_administrator %}
+        <hr>
+        <a class="btn btn-default" href="{{ url_for('main.edit', blog_id=blog.id) }}">修改</a>
     {% endif %}
 {% endblock %}
