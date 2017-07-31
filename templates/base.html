@@ -26,10 +26,13 @@
                     <li><a href="{{ url_for('main.index') }}">学习</a></li>
                     <li><a href="{{ url_for('main.index') }}">扯淡</a></li>
                     <li><a href="{{ url_for('main.index') }}">关于</a></li>
-                    <li><a href="{{ url_for('main.reset') }}">修改密码</a></li>
                     <li><a href="{{ url_for('main.login') }}">登录</a></li>
-                    <li><a href="{{ url_for('main.logout') }}">退出</a></li>
-                    <li><a href="{{ url_for('main.publish') }}">发布</a></li>
+                    {% if current_user.is_administrator %}
+                        <li><a href="{{ url_for('main.publish') }}">发布</a></li>
+                        <li><a href="{{ url_for('main.deleted') }}">已删除</a></li>
+                        <li><a href="{{ url_for('main.reset') }}">修改密码</a></li>
+                        <li><a href="{{ url_for('main.logout') }}">退出</a></li>
+                    {% endif %}
                 </ul>
             </div>
         </div>
