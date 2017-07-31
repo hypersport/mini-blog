@@ -10,5 +10,18 @@
             {{ msg }}
         </div>
     {% endfor %}
-    <h1>{{ context }}</h1>
+    <h1>Mini Blog</h1>
+    <hr>
+    {% if blogs %}
+        {% for blog in blogs %}
+            <h2>
+                <a href="{{ url_for('main.details', blog_id=blog.id) }}">
+                    <span>{{ blog.title|safe }}</span>
+                </a>
+            </h2>
+            <hr>
+        {% endfor %}
+    {% else %}
+        <h1>别看了！空的！</h1>
+    {% endif %}
 {% endblock %}
