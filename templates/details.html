@@ -27,5 +27,6 @@
     {% if current_user.is_administrator %}
         <hr>
         <a class="btn btn-default" href="{{ url_for('main.edit', blog_id=blog.id) }}">修改</a>
+        <a class="btn btn-default" href="{{ url_for('main.delete', blog_id=blog.id) }}">删除</a>
     {% endif %}
 {% endblock %}
