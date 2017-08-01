@@ -59,6 +59,11 @@ def index(tag):
 	return render_template('index.html', blogs=blogs)
 
 
+@main.route('/about')
+def about():
+	return render_template('about.html')
+
+
 @main.route('/reset', methods=['GET', 'POST'])
 @login_required
 def reset():
