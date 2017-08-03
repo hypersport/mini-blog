@@ -1,0 +1,20 @@
+#mark_input {
+    background: transparent;
+    height: 28px;
+    padding: 2px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+}
+
+#category_editor {
+    background: transparent;
+    height: 28px;
+    width: 100px;
+    padding: 2px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+}
+
+.tag_span {
+    font-size: 24px;
+}

@@ -59,6 +59,18 @@ def index(tag):
 	return render_template('index.html', blogs=blogs)
 
 
+@main.route('/learn')
+def learn():
+	learn_blogs = Blog.query.filter_by(is_deleted=False, category=1).all()
+	return render_template('index.html', blogs=learn_blogs)
+
+
+@main.route('/blah')
+def blah():
+	blah_blogs = Blog.query.filter_by(is_deleted=False, category=2).all()
+	return render_template('index.html', blogs=blah_blogs)
+
+
 @main.route('/about')
 def about():
 	return render_template('about.html')
@@ -91,8 +103,10 @@ def file_upload():
 @login_required
 def publish():
 	form = EditorForm()
+	form.category.choices = [(1, '学习'), (2, '扯淡')]
 	if form.validate_on_submit():
-		blog = Blog(title=form.title.data, body=form.body.data, mark=form.mark.data, author_id=current_user.id)
+		blog = Blog(title=form.title.data, body=form.body.data, mark=form.mark.data, author_id=current_user.id,
+					category=form.category.data)
 		db.session.add(blog)
 		return redirect(url_for('main.index'))
 	return render_template('editor.html', form=form)

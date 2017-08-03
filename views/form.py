@@ -3,7 +3,7 @@ from flask_login import current_user
 from flask_wtf import FlaskForm
 from wtforms.validators import DataRequired, Length, ValidationError, Regexp, EqualTo
 from models import User
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextAreaField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextAreaField, SelectField
 from custom import CancelField
 
 
@@ -40,5 +40,6 @@ class EditorForm(FlaskForm):
 	title = StringField('标题', validators=[DataRequired('内容不能空')])
 	body = TextAreaField('内容', validators=[DataRequired('内容不能空')])
 	mark = StringField('标签')
+	category = SelectField('分类', default=1)
 	submit = SubmitField('提交')
 	cancel = CancelField('取消')

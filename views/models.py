@@ -40,6 +40,7 @@ class Blog(db.Model):
 	title = db.Column(db.Text)
 	body = db.Column(db.Text)
 	mark = db.Column(db.Text)
+	category = db.Column(db.Integer)  # 1 learn	2 blah
 	timestamp = db.Column(db.DateTime, index=True, default=datetime.now())
 	changed_time = db.Column(db.DateTime)
 	comments = db.relationship('Comment', backref='blog', lazy='dynamic')

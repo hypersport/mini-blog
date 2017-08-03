@@ -7,7 +7,7 @@
         <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
         <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
         <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="css/bootstrap.css") }}">
-        {# <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="css/my-style.css") }}"> #}
+        <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="css/mystyle.css") }}">
         <script src="{{ url_for("static", filename="js/jquery-3.1.1.min.js") }}"></script>
         <script src="{{ url_for("static", filename="js/my_function.js") }}"></script>
         <script src="{{ url_for("static", filename="ckeditor/ckeditor.js") }}"></script>
@@ -23,10 +23,12 @@
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li><a href="{{ url_for('main.index') }}">首页</a></li>
-                    <li><a href="{{ url_for('main.index') }}">学习</a></li>
-                    <li><a href="{{ url_for('main.index') }}">扯淡</a></li>
+                    <li><a href="{{ url_for('main.learn') }}">学习</a></li>
+                    <li><a href="{{ url_for('main.blah') }}">扯淡</a></li>
                     <li><a href="{{ url_for('main.index') }}">关于</a></li>
-                    <li><a href="{{ url_for('main.login') }}">登录</a></li>
+                    {% if not current_user %}
+                        <li><a href="{{ url_for('main.login') }}">登录</a></li>
+                    {% endif %}
                     {% if current_user.is_administrator %}
                         <li><a href="{{ url_for('main.publish') }}">发布</a></li>
                         <li><a href="{{ url_for('main.deleted') }}">已删除</a></li>
