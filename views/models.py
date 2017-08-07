@@ -43,6 +43,7 @@ class Blog(db.Model):
 	category = db.Column(db.Integer)  # 1 learn	2 blah
 	timestamp = db.Column(db.DateTime, index=True, default=datetime.now())
 	changed_time = db.Column(db.DateTime, index=True, default=datetime.now())
+	deleted_time = db.Column(db.DateTime)
 	comments = db.relationship('Comment', backref='blog', lazy='dynamic')
 	is_deleted = db.Column(db.Boolean, default=False)
 	author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
