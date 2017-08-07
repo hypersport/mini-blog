@@ -103,7 +103,6 @@ def file_upload():
 @login_required
 def publish():
 	form = EditorForm()
-	form.category.choices = [(1, '学习'), (2, '扯淡')]
 	if form.validate_on_submit():
 		blog = Blog(title=form.title.data, body=form.body.data, mark=form.mark.data, author_id=current_user.id,
 					category=form.category.data)

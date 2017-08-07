@@ -40,6 +40,6 @@ class EditorForm(FlaskForm):
 	title = StringField('标题', validators=[DataRequired('内容不能空')])
 	body = TextAreaField('内容', validators=[DataRequired('内容不能空')])
 	mark = StringField('标签')
-	category = SelectField('分类', default=1)
+	category = SelectField('分类', coerce=int, choices=[(1, '学习'), (2, '扯淡')])
 	submit = SubmitField('提交')
 	cancel = CancelField('取消')
