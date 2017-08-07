@@ -10,6 +10,7 @@ class Config():
 	SQLALCHEMY_RECORD_QUERIES = True
 	SQLALCHEMY_TRACK_MODIFICATIONS = False
 	FLASKY_SLOW_DB_QUERY_TIME = 0.5
+	FLASKY_PER_PAGE = 10
 	
 	@staticmethod
 	def init__app(app):

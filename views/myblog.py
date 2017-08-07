@@ -2,7 +2,7 @@
 import random
 from flask_login import login_user, logout_user, login_required, current_user
 from . import main, db
-from flask import render_template, flash, redirect, request, url_for, abort
+from flask import render_template, flash, redirect, request, url_for, abort, current_app
 from models import User, Blog
 from form import LoginForm, ResetPasswordForm, EditorForm
 from datetime import datetime
@@ -57,7 +57,7 @@ def logout():
 def index(tag):
 	page = request.args.get('page', 1, type=int)
 	pagination = Blog.query.filter_by(is_deleted=False).filter(Blog.mark.like('%' + tag + '%')).order_by(
-		Blog.changed_time.desc()).paginate(page, per_page=10, error_out=False)
+		Blog.changed_time.desc()).paginate(page, per_page=current_app.config['FLASKY_PER_PAGE'], error_out=False)
 	blogs = pagination.items
 	return render_template('index.html', blogs=blogs, pagination=pagination)
 
@@ -66,7 +66,7 @@ def index(tag):
 def learn():
 	page = request.args.get('page', 1, type=int)
 	pagination = Blog.query.filter_by(is_deleted=False, category=1).order_by(Blog.changed_time.desc()).paginate(
-		page, per_page=10, error_out=False)
+		page, per_page=current_app.config['FLASKY_PER_PAGE'], error_out=False)
 	learn_blogs = pagination.items
 	return render_template('index.html', blogs=learn_blogs, pagination=pagination)
 
@@ -75,7 +75,7 @@ def learn():
 def blah():
 	page = request.args.get('page', 1, type=int)
 	pagination = Blog.query.filter_by(is_deleted=False, category=2).order_by(Blog.changed_time.desc()).paginate(
-		page, per_page=10, error_out=False)
+		page, per_page=current_app.config['FLASKY_PER_PAGE'], error_out=False)
 	blah_blogs = pagination.items
 	return render_template('index.html', blogs=blah_blogs, pagination=pagination)
 
