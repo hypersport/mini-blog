@@ -156,15 +156,18 @@ def delete(blog_id):
 	if blog.is_deleted:
 		abort(404)
 	blog.is_deleted = 1
+	blog.deleted_time = datetime.now()
 	return redirect(url_for('main.index'))
 
 
-@main.route('/deleted', defaults={'tag': ''})
-@main.route('/<string:tag>')
+@main.route('/deleted', methods=['GET', 'POST'])
 @login_required
-def deleted(tag):
-	blogs = Blog.query.filter_by(is_deleted=1).filter(Blog.mark.like('%' + tag + '%')).all()
-	return render_template('index.html', blogs=blogs)
+def deleted():
+	page = request.args.get('page', 1, type=int)
+	pagination = Blog.query.filter_by(is_deleted=1).order_by(
+		Blog.deleted_time.desc()).paginate(page, per_page=current_app.config['FLASKY_PER_PAGE'], error_out=False)
+	blogs = pagination.items
+	return render_template('index.html', blogs=blogs, pagination=pagination)
 
 
 @main.route('/restore/<int:blog_id>', methods=['GET', 'POST'])
