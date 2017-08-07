@@ -42,7 +42,7 @@ class Blog(db.Model):
 	mark = db.Column(db.Text)
 	category = db.Column(db.Integer)  # 1 learn	2 blah
 	timestamp = db.Column(db.DateTime, index=True, default=datetime.now())
-	changed_time = db.Column(db.DateTime)
+	changed_time = db.Column(db.DateTime, index=True, default=datetime.now())
 	comments = db.relationship('Comment', backref='blog', lazy='dynamic')
 	is_deleted = db.Column(db.Boolean, default=False)
 	author_id = db.Column(db.Integer, db.ForeignKey('users.id'))

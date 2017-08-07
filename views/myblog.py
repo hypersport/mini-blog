@@ -55,20 +55,29 @@ def logout():
 @main.route('/', defaults={'tag': ''})
 @main.route('/<string:tag>')
 def index(tag):
-	blogs = Blog.query.filter_by(is_deleted=False).filter(Blog.mark.like('%' + tag + '%')).all()
-	return render_template('index.html', blogs=blogs)
+	page = request.args.get('page', 1, type=int)
+	pagination = Blog.query.filter_by(is_deleted=False).filter(Blog.mark.like('%' + tag + '%')).order_by(
+		Blog.changed_time.desc()).paginate(page, per_page=10, error_out=False)
+	blogs = pagination.items
+	return render_template('index.html', blogs=blogs, pagination=pagination)
 
 
 @main.route('/learn')
 def learn():
-	learn_blogs = Blog.query.filter_by(is_deleted=False, category=1).all()
-	return render_template('index.html', blogs=learn_blogs)
+	page = request.args.get('page', 1, type=int)
+	pagination = Blog.query.filter_by(is_deleted=False, category=1).order_by(Blog.changed_time.desc()).paginate(
+		page, per_page=10, error_out=False)
+	learn_blogs = pagination.items
+	return render_template('index.html', blogs=learn_blogs, pagination=pagination)
 
 
 @main.route('/blah')
 def blah():
-	blah_blogs = Blog.query.filter_by(is_deleted=False, category=2).all()
-	return render_template('index.html', blogs=blah_blogs)
+	page = request.args.get('page', 1, type=int)
+	pagination = Blog.query.filter_by(is_deleted=False, category=2).order_by(Blog.changed_time.desc()).paginate(
+		page, per_page=10, error_out=False)
+	blah_blogs = pagination.items
+	return render_template('index.html', blogs=blah_blogs, pagination=pagination)
 
 
 @main.route('/about')

@@ -11,10 +11,7 @@
         </div>
     {% endfor %}
     <h1>{{ blog.title|safe }}</h1>
-    创建于：{{ blog.timestamp }}
-    {% if blog.changed_time %}
-        &emsp;&emsp;修改于：{{ blog.changed_time }}
-    {% endif %}
+    {{ blog.changed_time }}
     <hr>
     {{ blog.body|safe }}
     <hr>
