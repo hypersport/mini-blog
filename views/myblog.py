@@ -98,7 +98,7 @@ def reset():
 
 
 def rand_filename():
-	filename = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+	filename = datetime.now().strftime('%Y%m%d%H%M%S')
 	return '{}{}'.format(filename, str(random.randrange(100, 1000)))
 
 
@@ -164,8 +164,8 @@ def delete(blog_id):
 @login_required
 def deleted():
 	page = request.args.get('page', 1, type=int)
-	pagination = Blog.query.filter_by(is_deleted=1).order_by(
-		Blog.deleted_time.desc()).paginate(page, per_page=current_app.config['FLASKY_PER_PAGE'], error_out=False)
+	pagination = Blog.query.filter_by(is_deleted=1).order_by(Blog.deleted_time.desc()).paginate(
+		page, per_page=current_app.config['FLASKY_PER_PAGE'], error_out=False)
 	blogs = pagination.items
 	return render_template('index.html', blogs=blogs, pagination=pagination)
 
