@@ -13,13 +13,15 @@
             <h3 class="control-label" for="title">内容：</h3>
             {{ form.body(class="ckeditor") }}
         </div>
-        <div class="form-group required">
-            <span class="tag_span">标签：</span>
-            {{ form.mark(id="mark_input") }}
-            <span class="tag_span">&emsp;&emsp;&emsp;&emsp;分类：</span>
-            {{ form.category(id="category_editor") }}
-        </div>
-        <hr>
+        {% if not is_about %}
+            <div class="form-group required">
+                <span class="tag_span">标签：</span>
+                {{ form.mark(id="mark_input") }}
+                <span class="tag_span">&emsp;&emsp;&emsp;&emsp;分类：</span>
+                {{ form.category(id="category_editor") }}
+            </div>
+            <hr>
+        {% endif %}
         <div class="form-group required">
             {{ form.submit(class="btn btn-default") }}
             {{ form.cancel(class="btn btn-default") }}

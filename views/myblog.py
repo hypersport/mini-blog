@@ -82,7 +82,10 @@ def blah():
 
 @main.route('/about')
 def about():
-	return render_template('about.html')
+	blog = Blog.query.filter_by(is_deleted=False, category=0).first()
+	if blog:
+		return render_template('about.html', blog=blog)
+	abort(404)
 
 
 @main.route('/reset', methods=['GET', 'POST'])
@@ -138,7 +141,8 @@ def edit(blog_id):
 	form.body.data = blog.body
 	if blog.mark:
 		form.mark.data = blog.mark
-	return render_template('editor.html', form=form)
+	is_about = request.args.get('is_about', 0)
+	return render_template('editor.html', form=form, is_about=is_about)
 
 
 @main.route('/details/<int:blog_id>', methods=['GET', 'POST'])

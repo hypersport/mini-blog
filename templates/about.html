@@ -4,5 +4,23 @@
     {{ super() }}
 {% endblock %}
 {% block content %}
-    <h1>暂时是空的呀！</h1>
+    {% for msg in get_flashed_messages() %}
+        <div class="alert alert-warning">
+            <button type="button" class="close" onclick="closeMsg()">&times;</button>
+            {{ msg }}
+        </div>
+    {% endfor %}
+    <h1>{{ blog.title|safe }}</h1>
+    {{ blog.changed_time }}
+    <hr>
+    {{ blog.body|safe }}
+    {% if current_user.is_administrator %}
+        <hr>
+        <a class="btn btn-default" href="{{ url_for('main.edit', blog_id=blog.id, is_about=1) }}">修改</a>
+        {% if blog.is_deleted %}
+            <a class="btn btn-default" href="{{ url_for('main.restore', blog_id=blog.id) }}">恢复</a>
+        {% else %}
+            <a class="btn btn-default" href="{{ url_for('main.delete', blog_id=blog.id) }}">删除</a>
+        {% endif %}
+    {% endif %}
 {% endblock %}
