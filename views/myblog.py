@@ -4,7 +4,7 @@ from flask_login import login_user, logout_user, login_required, current_user
 from . import main, db
 from flask import render_template, flash, redirect, request, url_for, abort, current_app
 from models import User, Blog
-from form import LoginForm, ResetPasswordForm, EditorForm
+from form import LoginForm, ResetPasswordForm, EditorForm, EditorAboutForm
 from datetime import datetime
 
 
@@ -141,8 +141,23 @@ def edit(blog_id):
 	form.body.data = blog.body
 	if blog.mark:
 		form.mark.data = blog.mark
-	is_about = request.args.get('is_about', 0)
-	return render_template('editor.html', form=form, is_about=is_about)
+	return render_template('editor.html', form=form)
+
+
+@main.route('/edit_about', methods=['GET', 'POST'])
+@login_required
+def edit_about():
+	blog = Blog.query.filter_by(is_deleted=False, category=0).first()
+	form = EditorAboutForm()
+	if form.validate_on_submit():
+		blog.title = form.title.data
+		blog.body = form.body.data
+		blog.changed_time = datetime.now()
+		blog.changed_user_id = current_user.id
+		return redirect(url_for('main.about'))
+	form.title.data = blog.title
+	form.body.data = blog.body
+	return render_template('edit_about.html', form=form)
 
 
 @main.route('/details/<int:blog_id>', methods=['GET', 'POST'])
