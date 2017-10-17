@@ -1,11 +1,13 @@
 # coding=utf-8
 import random
+import datetime
+
+import os
 from flask_login import login_user, logout_user, login_required, current_user
 from . import main, db
-from flask import render_template, flash, redirect, request, url_for, abort, current_app
+from flask import render_template, flash, redirect, request, url_for, abort, current_app, make_response
 from models import User, Blog
 from form import LoginForm, ResetPasswordForm, EditorForm, EditorAboutForm
-from datetime import datetime
 
 
 @main.app_errorhandler(404)
@@ -101,14 +103,38 @@ def reset():
 
 
 def rand_filename():
-	filename = datetime.now().strftime('%Y%m%d%H%M%S')
+	filename = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
 	return '{}{}'.format(filename, str(random.randrange(100, 1000)))
 
 
-@main.route('/fileupload')
+@main.route('/upload', methods=['GET', 'POST'])
 @login_required
-def file_upload():
-	return
+def upload():
+	callback = request.args.get("CKEditorFuncNum")
+	if request.method == 'POST' and 'upload' in request.files:
+		file_obj = request.files['upload']
+		file_name, fext = os.path.splitext(file_obj.filename)
+		rnd_name = '{}{}'.format(rand_filename(), fext)
+		file_path = os.path.join(current_app.static_folder, 'upload', rnd_name)
+		dir_name = os.path.dirname(file_path)
+		error = ''
+		if not os.path.exists(dir_name):
+			try:
+				os.makedirs(dir_name)
+			except:
+				error = 'ERROR_CREATE_DIR'
+		elif not os.access(dir_name, os.W_OK):
+			error = 'ERROR_DIR_NOT_WRITEABLE'
+		if not error:
+			file_obj.save(file_path)
+			url = url_for('static', filename='%s/%s' % ('upload', rnd_name))
+	else:
+		error = 'post error'
+	res = """<script type="text/javascript">window.parent.CKEDITOR.tools.callFunction(%s, '%s', '%s');</script>""" % (
+		callback, url, error)
+	response = make_response(res)
+	response.headers["Content-Type"] = "text/html"
+	return response
 
 
 @main.route('/publish', methods=['GET', 'POST'])
@@ -134,7 +160,7 @@ def edit(blog_id):
 		blog.title = form.title.data
 		blog.body = form.body.data
 		blog.mark = form.mark.data
-		blog.changed_time = datetime.now()
+		blog.changed_time = datetime.datetime.now()
 		blog.changed_user_id = current_user.id
 		return redirect(url_for('main.details', blog_id=blog_id))
 	form.title.data = blog.title
@@ -152,7 +178,7 @@ def edit_about():
 	if form.validate_on_submit():
 		blog.title = form.title.data
 		blog.body = form.body.data
-		blog.changed_time = datetime.now()
+		blog.changed_time = datetime.datetime.now()
 		blog.changed_user_id = current_user.id
 		return redirect(url_for('main.about'))
 	form.title.data = blog.title
@@ -175,7 +201,7 @@ def delete(blog_id):
 	if blog.is_deleted:
 		abort(404)
 	blog.is_deleted = 1
-	blog.deleted_time = datetime.now()
+	blog.deleted_time = datetime.datetime.now()
 	return redirect(url_for('main.index'))
 
 
