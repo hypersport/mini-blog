@@ -1,8 +1,8 @@
 # coding=utf-8
 import random
 import datetime
-
 import os
+import imghdr
 from flask_login import login_user, logout_user, login_required, current_user
 from . import main, db
 from flask import render_template, flash, redirect, request, url_for, abort, current_app, make_response
@@ -107,29 +107,50 @@ def rand_filename():
 	return '{}{}'.format(filename, str(random.randrange(100, 1000)))
 
 
+@main.route('/browser', methods=['GET', 'POST'])
+@login_required
+def browser():
+	urls = []
+	pics = ['rgb', 'gif', 'pbm', 'pgm', 'ppm', 'tiff', 'rast', 'xbm', 'jpeg', 'bmp', 'png', 'exif']
+	file_path = current_app.static_folder + '/upload'
+	object_dir = os.path.dirname(os.path.realpath(__file__))
+	for path, dirs, files in os.walk(file_path):
+		for f in files:
+			url = url_for('static', filename='%s/%s' % ('upload', f))
+			file_full_path = object_dir + '/..' + url
+			if imghdr.what(file_full_path) in pics:
+				urls.append(url)
+	return render_template('browser.html', urls=urls)
+
+
 @main.route('/upload', methods=['GET', 'POST'])
 @login_required
 def upload():
+	pics = ['rgb', 'gif', 'pbm', 'pgm', 'ppm', 'tiff', 'rast', 'xbm', 'jpeg', 'bmp', 'png', 'exif']
+	error = ''
+	url = ''
 	callback = request.args.get("CKEditorFuncNum")
 	if request.method == 'POST' and 'upload' in request.files:
 		file_obj = request.files['upload']
-		file_name, fext = os.path.splitext(file_obj.filename)
-		rnd_name = '{}{}'.format(rand_filename(), fext)
-		file_path = os.path.join(current_app.static_folder, 'upload', rnd_name)
-		dir_name = os.path.dirname(file_path)
-		error = ''
-		if not os.path.exists(dir_name):
-			try:
-				os.makedirs(dir_name)
-			except:
-				error = 'ERROR_CREATE_DIR'
-		elif not os.access(dir_name, os.W_OK):
-			error = 'ERROR_DIR_NOT_WRITEABLE'
-		if not error:
-			file_obj.save(file_path)
-			url = url_for('static', filename='%s/%s' % ('upload', rnd_name))
+		if imghdr.what(file_obj) in pics:
+			file_name, fext = os.path.splitext(file_obj.filename)
+			rnd_name = '{}{}'.format(rand_filename(), fext)
+			file_path = os.path.join(current_app.static_folder, 'upload', rnd_name)
+			dir_name = os.path.dirname(file_path)
+			if not os.path.exists(dir_name):
+				try:
+					os.makedirs(dir_name)
+				except:
+					error = '无法创建目录'
+			elif not os.access(dir_name, os.W_OK):
+				error = '目录无法写入'
+			if not error:
+				file_obj.save(file_path)
+				url = url_for('static', filename='%s/%s' % ('upload', rnd_name))
+		else:
+			error = '请上传图片'
 	else:
-		error = 'post error'
+		error = '上传错误'
 	res = """<script type="text/javascript">window.parent.CKEDITOR.tools.callFunction(%s, '%s', '%s');</script>""" % (
 		callback, url, error)
 	response = make_response(res)
