@@ -174,8 +174,8 @@ def publish():
 @login_required
 def edit(blog_id):
 	blog = Blog.query.get_or_404(blog_id)
-	if blog.is_deleted:
-		abort(404)
+	# if blog.is_deleted:
+	# 	abort(404)
 	form = EditorForm()
 	if form.validate_on_submit():
 		blog.title = form.title.data
