@@ -15,7 +15,7 @@ def page_not_found(e):
 	return render_template('404.html'), 404
 
 
-@main.app_errorhandler(503)
+@main.app_errorhandler(403)
 def page_not_found(e):
 	return render_template('403.html'), 403
 
@@ -210,8 +210,8 @@ def edit_about():
 @main.route('/details/<int:blog_id>', methods=['GET', 'POST'])
 def details(blog_id):
 	blog = Blog.query.get_or_404(blog_id)
-	if blog.is_deleted and not current_user:
-		abort(404)
+	if blog.is_deleted and current_user.is_anonymous:
+		abort(403)
 	return render_template('details.html', blog=blog)
 
 
