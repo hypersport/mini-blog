@@ -19,10 +19,10 @@ from . import myblog
 
 
 def create_app(config_file):
-	app = Flask(__name__, static_folder='../static', template_folder='../templates')
-	app.config.from_object(config[config_file])
-	db.init_app(app)
-	bootstrap.init_app(app)
-	login_manager.init_app(app)
-	app.register_blueprint(main)
-	return app
+    app = Flask(__name__, static_folder='../static', template_folder='../templates')
+    app.config.from_object(config[config_file])
+    db.init_app(app)
+    bootstrap.init_app(app)
+    login_manager.init_app(app)
+    app.register_blueprint(main)
+    return app
