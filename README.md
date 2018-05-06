@@ -40,4 +40,4 @@ Mini-Blog 使用 flask 开发的个人小博客
 
 ## Demo
 
-[mini-blog](http://23.105.211.229) (美国的服务器)
+[mini-blog](http://pythonista.cn/) (美国服务器，速度稍慢)
