@@ -1,4 +1,3 @@
-# coding=utf-8
 import random
 import datetime
 import os
@@ -6,8 +5,8 @@ import imghdr
 from flask_login import login_user, logout_user, login_required, current_user
 from . import main, db
 from flask import render_template, flash, redirect, request, url_for, abort, current_app, make_response
-from models import User, Blog
-from form import LoginForm, ResetPasswordForm, EditorForm, EditorAboutForm
+from .models import User, Blog
+from .form import LoginForm, ResetPasswordForm, EditorForm, EditorAboutForm
 
 
 @main.app_errorhandler(404)

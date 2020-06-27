@@ -1,12 +1,9 @@
 from flask import Flask, Blueprint
-import sys
 from config import config
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_bootstrap import Bootstrap
 
-reload(sys)
-sys.setdefaultencoding("utf-8")
 
 main = Blueprint('main', __name__)
 db = SQLAlchemy()
