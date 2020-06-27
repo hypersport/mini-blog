@@ -2,7 +2,7 @@ import os
 
 
 class Config():
-	SECRET_KEY = os.environ.get('FLASK_SECRET_KEY', 'danxinghaoshimowenqiancheng')
+	SECRET_KEY = os.environ.get('FLASK_SECRET_KEY', 'f&k*n@kfa_H*tf^$)')
 	SSL_DISABLE = False
 	SQLALCHEMY_COMMIT_ON_TEARDOWN = True
 	SQLALCHEMY_RECORD_QUERIES = True
@@ -17,12 +17,12 @@ class Config():
 
 class DevelopmentConfig(Config):
 	DEBUG = True
-	SQLALCHEMY_DATABASE_URI = 'mysql://root:root@localhost:3306/flask_dev?charset=utf8'
+	SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:123456@localhost:3306/flask_dev?charset=utf8mb4'
 
 
 class ProductionConfig(Config):
 	DEBUG = False
-	SQLALCHEMY_DATABASE_URI = 'mysql://root:root@localhost:3306/flask_pro?charset=utf8'
+	SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:123456@localhost:3306/flask_pro?charset=utf8mb4'
 
 
 config = {
