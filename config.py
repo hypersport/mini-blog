@@ -17,12 +17,14 @@ class Config():
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:123456@localhost:3306/flask_dev?charset=utf8mb4'
+    SQLALCHEMY_DATABASE_URI = ('mysql+pymysql://root:123456@localhost:3306'
+                               '/flask_dev?charset=utf8mb4')
 
 
 class ProductionConfig(Config):
     DEBUG = False
-    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:123456@localhost:3306/flask_pro?charset=utf8mb4'
+    SQLALCHEMY_DATABASE_URI = ('mysql+pymysql://root:123456@localhost:3306'
+                               '/flask_pro?charset=utf8mb4')
 
 
 config = {
