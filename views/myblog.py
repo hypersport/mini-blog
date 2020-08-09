@@ -219,11 +219,13 @@ def edit(blog_id):
         blog.title = form.title.data
         blog.body = form.body.data
         blog.mark = form.mark.data
+        blog.category = form.category.data
         blog.changed_time = datetime.datetime.now()
         blog.changed_user_id = current_user.id
         return redirect(url_for('main.details', blog_id=blog_id))
     form.title.data = blog.title
     form.body.data = blog.body
+    form.category.data = blog.category
     if blog.mark:
         form.mark.data = blog.mark
     return render_template('editor.html', form=form)
