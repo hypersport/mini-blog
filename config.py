@@ -9,6 +9,10 @@ class Config():
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     FLASKY_SLOW_DB_QUERY_TIME = 0.5
     FLASKY_PER_PAGE = 10
+    CKEDITOR_SERVE_LOCAL = True
+    CKEDITOR_HEIGHT = 400
+    CKEDITOR_ENABLE_CODESNIPPET = True
+    CKEDITOR_FILE_UPLOADER = 'main.upload'
 
     @staticmethod
     def init__app(app):

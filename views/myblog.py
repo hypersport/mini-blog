@@ -1,27 +1,30 @@
-import random
 import datetime
-import os
 import imghdr
-from flask import render_template
-from flask import flash
-from flask import redirect
-from flask import request
-from flask import url_for
+import os
+import random
+
 from flask import abort
 from flask import current_app
-from flask import make_response
+from flask import flash
+from flask import redirect
+from flask import render_template
+from flask import request
+from flask import send_from_directory
+from flask import url_for
+from flask_ckeditor import upload_fail, upload_success
+from flask_login import current_user
+from flask_login import login_required
 from flask_login import login_user
 from flask_login import logout_user
-from flask_login import login_required
-from flask_login import current_user
-from . import main
+
 from . import db
-from .models import User
-from .models import Blog
+from . import main
+from .form import EditorAboutForm
+from .form import EditorForm
 from .form import LoginForm
 from .form import ResetPasswordForm
-from .form import EditorForm
-from .form import EditorAboutForm
+from .models import Blog
+from .models import User
 
 
 @main.app_errorhandler(404)
@@ -57,7 +60,7 @@ def login():
                 flash('请更换密码')
                 return redirect(url_for('main.reset'))
             return (redirect(request.args.get('next', '/')
-                    if request.args.get('next') != '/logout' else '/'))
+                             if request.args.get('next') != '/logout' else '/'))
         flash('登录失败')
     return render_template('login.html', form=form)
 
@@ -76,10 +79,10 @@ def index(tag):
     page = request.args.get('page', 1, type=int)
     pagination = Blog.query.filter_by(is_deleted=False).filter(
         Blog.mark.like('%' + tag + '%')).order_by(
-            Blog.changed_time.desc()).paginate(
-                page,
-                per_page=current_app.config['FLASKY_PER_PAGE'],
-                error_out=False)
+        Blog.changed_time.desc()).paginate(
+        page,
+        per_page=current_app.config['FLASKY_PER_PAGE'],
+        error_out=False)
     blogs = pagination.items
     return render_template('index.html', blogs=blogs, pagination=pagination)
 
@@ -89,10 +92,10 @@ def learn():
     page = request.args.get('page', 1, type=int)
     pagination = Blog.query.filter_by(
         is_deleted=False, category=1).order_by(
-            Blog.changed_time.desc()).paginate(
-                page,
-                per_page=current_app.config['FLASKY_PER_PAGE'],
-                error_out=False)
+        Blog.changed_time.desc()).paginate(
+        page,
+        per_page=current_app.config['FLASKY_PER_PAGE'],
+        error_out=False)
     learn_blogs = pagination.items
     return render_template('index.html',
                            blogs=learn_blogs,
@@ -104,9 +107,9 @@ def blah():
     page = request.args.get('page', 1, type=int)
     pagination = Blog.query.filter_by(is_deleted=False, category=2).order_by(
         Blog.changed_time.desc()).paginate(
-            page,
-            per_page=current_app.config['FLASKY_PER_PAGE'],
-            error_out=False)
+        page,
+        per_page=current_app.config['FLASKY_PER_PAGE'],
+        error_out=False)
     blah_blogs = pagination.items
     return render_template('index.html',
                            blogs=blah_blogs,
@@ -138,21 +141,11 @@ def rand_filename():
     return '{}{}'.format(filename, str(random.randrange(100, 1000)))
 
 
-@main.route('/browser', methods=['GET', 'POST'])
+@main.route('/files/<path:filename>')
 @login_required
-def browser():
-    urls = []
-    pics = ['rgb', 'gif', 'pbm', 'pgm', 'ppm', 'tiff',
-            'rast', 'xbm', 'jpeg', 'bmp', 'png', 'exif']
-    file_path = current_app.static_folder + '/upload'
-    object_dir = os.path.dirname(os.path.realpath(__file__))
-    for path, dirs, files in os.walk(file_path):
-        for f in files:
-            url = url_for('static', filename='%s/%s' % ('upload', f))
-            file_full_path = object_dir + '/..' + url
-            if imghdr.what(file_full_path) in pics:
-                urls.append(url)
-    return render_template('browser.html', urls=urls)
+def uploaded_files(filename):
+    path = os.path.join(current_app.static_folder, 'upload')
+    return send_from_directory(path, filename)
 
 
 @main.route('/upload', methods=['GET', 'POST'])
@@ -160,37 +153,27 @@ def browser():
 def upload():
     pics = ['rgb', 'gif', 'pbm', 'pgm', 'ppm', 'tiff',
             'rast', 'xbm', 'jpeg', 'bmp', 'png', 'exif']
-    error = ''
-    url = ''
-    callback = request.args.get("CKEditorFuncNum")
     if request.method == 'POST' and 'upload' in request.files:
         file_obj = request.files['upload']
         if imghdr.what(file_obj) in pics:
             file_name, fext = os.path.splitext(file_obj.filename)
             rnd_name = '{}{}'.format(rand_filename(), fext)
-            file_path = os.path.join(
-                current_app.static_folder, 'upload', rnd_name)
+            file_path = os.path.join(current_app.static_folder, 'upload', rnd_name)
             dir_name = os.path.dirname(file_path)
             if not os.path.exists(dir_name):
                 try:
                     os.makedirs(dir_name)
                 except OSError:
-                    error = '无法创建目录'
+                    return upload_fail(message='无法创建目录')
             elif not os.access(dir_name, os.W_OK):
-                error = '目录无法写入'
-            if not error:
-                file_obj.save(file_path)
-                url = url_for(
-                    'static', filename='%s/%s' % ('upload', rnd_name))
+                return upload_fail(message='目录无法写入')
+            file_obj.save(file_path)
+            url = url_for('main.uploaded_files', filename=rnd_name)
+            return upload_success(url)
         else:
-            error = '请上传图片'
+            return upload_fail(message='请上传图片')
     else:
-        error = '上传错误'
-    res = """<script type="text/javascript">window.parent.CKEDITOR.tools.callFunction(%s, '%s', '%s');</script>""" % (
-        callback, url, error)
-    response = make_response(res)
-    response.headers["Content-Type"] = "text/html"
-    return response
+        return upload_fail(message='上传错误')
 
 
 @main.route('/publish', methods=['GET', 'POST'])
@@ -272,9 +255,9 @@ def deleted():
     page = request.args.get('page', 1, type=int)
     pagination = Blog.query.filter_by(is_deleted=1).order_by(
         Blog.deleted_time.desc()).paginate(
-            page,
-            per_page=current_app.config['FLASKY_PER_PAGE'],
-            error_out=False)
+        page,
+        per_page=current_app.config['FLASKY_PER_PAGE'],
+        error_out=False)
     blogs = pagination.items
     return render_template('index.html', blogs=blogs, pagination=pagination)
 

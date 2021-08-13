@@ -28,7 +28,7 @@ Mini-Blog 使用 flask 开发的个人小博客
 
 * 数据库 MySQL
 
-* flask, flask_login, flask_sqlalchemy, flask_bootstrap, flask_wtf
+* flask, flask_login, flask_sqlalchemy, flask_bootstrap, flask_wtf, flask_ckeditor
 
 * MySQLdb
 
@@ -36,8 +36,8 @@ Mini-Blog 使用 flask 开发的个人小博客
 
 * wtforms
 
-* [CKeditor](https://ckeditor.com/) (已包含在代码中)
+* ~~[CKeditor](https://ckeditor.com/) (已包含在代码中)~~
 
 ## Demo
 
-~~[mini-blog](http://pythonista.cn/)~~
+[mini-blog](http://pythonista.cn/)

@@ -1,3 +1,4 @@
+from flask_ckeditor import CKEditorField
 from flask_login import current_user
 from flask_wtf import FlaskForm
 from wtforms import StringField
@@ -51,7 +52,7 @@ class ResetPasswordForm(FlaskForm):
 
 class EditorForm(FlaskForm):
     title = StringField('标题', validators=[DataRequired('内容不能空')])
-    body = TextAreaField('内容', validators=[DataRequired('内容不能空')])
+    body = CKEditorField('内容', validators=[DataRequired()])
     mark = StringField('标签')
     category = SelectField('分类', coerce=int, choices=[(1, '学习'), (2, '扯淡')])
     submit = SubmitField('提交')

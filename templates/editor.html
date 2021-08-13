@@ -3,7 +3,6 @@
 {% block title %}Editor{% endblock %}
 {% block head %}
     {{ super() }}
-    <script src="{{ url_for("static", filename="ckeditor/ckeditor.js") }}"></script>
 {% endblock %}
 {% block content %}
     <form class="form" role="form" method="post" action=>
@@ -12,17 +11,8 @@
         {{ form.title(class="form-control") }}
         <div class="form-group required">
             <h3 class="control-label" for="title">内容：</h3>
-            {{ form.body(class="ckeditor") }}
+            {{ form.body }}
         </div>
-{#        <div>#}
-{#            <h3>test</h3>#}
-{#            <textarea id="contentxxx" class="ckeditor"></textarea>#}
-{#        </div>#}
-{#        <script type="text/javascript">#}
-{#            CKEDITOR.replace('contentxxx', {#}
-{#                filebrowserUploadUrl: '/upload',#}
-{#            });#}
-{#        </script>#}
         <div class="form-group required">
             <span class="tag_span">标签：</span>
             {{ form.mark(id="mark_input") }}
@@ -35,4 +25,6 @@
             {{ form.cancel(class="btn btn-default") }}
         </div>
     </form>
+    {{ ckeditor.load() }}
+    {{ ckeditor.config(name='body') }}
 {% endblock %}
