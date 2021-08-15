@@ -142,7 +142,6 @@ def rand_filename():
 
 
 @main.route('/files/<path:filename>')
-@login_required
 def uploaded_files(filename):
     path = os.path.join(current_app.static_folder, 'upload')
     return send_from_directory(path, filename)
