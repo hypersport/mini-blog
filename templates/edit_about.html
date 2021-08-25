@@ -3,7 +3,6 @@
 {% block title %}Edit About{% endblock %}
 {% block head %}
     {{ super() }}
-    <script src="{{ url_for("static", filename="ckeditor/ckeditor.js") }}"></script>
 {% endblock %}
 {% block content %}
     <form class="form" role="form" method="post" action=>
@@ -12,11 +11,13 @@
         {{ form.title(class="form-control") }}
         <div class="form-group required">
             <h3 class="control-label" for="title">内容：</h3>
-            {{ form.body(class="ckeditor") }}
+            {{ form.body }}
         </div>
         <div class="form-group required">
             {{ form.submit(class="btn btn-default") }}
             {{ form.cancel(class="btn btn-default") }}
         </div>
     </form>
+    {{ ckeditor.load() }}
+    {{ ckeditor.config(name='body') }}
 {% endblock %}
